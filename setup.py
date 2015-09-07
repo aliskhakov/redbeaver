@@ -2,8 +2,8 @@ from distutils.core import setup
 
 setup(
     name='redbeaver',
-    version='0.1.1',
-    packages=[''],
+    version='0.1.2',
+    packages=['redbeaver'],
     url='https://github.com/aliskhakov/redbeaver',
     license='Apache 2.0',
     author='Albert Iskhakov',
