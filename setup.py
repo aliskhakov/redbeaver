@@ -1,7 +1,7 @@
 from distutils.core import setup
 
 setup(
-    name='readbeaver',
+    name='redbeaver',
     version='0.1.1',
     packages=[''],
     url='https://github.com/aliskhakov/redbeaver',
