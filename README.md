@@ -4,8 +4,13 @@ Redbeaver
 
 Installation
 ------------
+Download the source and run
 ```sh
 $ python setup.py install
+```
+or install the latest stable release with
+```sh
+$ pip install redbeaver
 ```
 
 License
