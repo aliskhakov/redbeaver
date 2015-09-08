@@ -11,7 +11,7 @@ class Eq(object):
             if isinstance(num, int):
                 self.num = num
             else:
-                raise TypeError(u'num can be only int')
+                raise TypeError(u'"num" parameter can be int only')
         else:
             if Eq.id:
                 self.num = max(Eq.id.keys(), key=int) + 1
@@ -27,6 +27,6 @@ class Eq(object):
         Eq.eq_registry[fn.__name__]['args'] = inspect.getargspec(fn).args
         Eq.eq_registry[fn.__name__]['fn'] = wrapped
 
-        Eq.id[self.num] = fn.__name__
+        Eq.id[self.num] = Eq.eq_registry[fn.__name__]
 
         return Eq.eq_registry[fn.__name__]['fn']
