@@ -21,7 +21,7 @@ class MyTestCase(unittest.TestCase):
 
         self.assertEqual(eq.id[1]['fn'](), 1)
 
-        @eq()
+        @eq(2)
         def a():
             return 2
 
