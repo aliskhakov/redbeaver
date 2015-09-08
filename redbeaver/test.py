@@ -1,4 +1,5 @@
 import unittest
+from redbeaver.exceptions import InfiniteLoopError
 from eq import Eq as eq
 from calc import calc
 
@@ -28,6 +29,21 @@ class MyTestCase(unittest.TestCase):
         calc('add', eq)
 
         self.assertEqual(eq.params['add'], 12)
+
+    def test_calc_loop_except(self):
+        @eq(1)
+        def a(b):
+            return b * 2
+
+        @eq(2)
+        def b(c):
+            return c * 4
+
+        @eq(3)
+        def c(a):
+            return a * 2
+
+        self.assertRaises(InfiniteLoopError, calc, *['a', eq])
 
 
 if __name__ == '__main__':
