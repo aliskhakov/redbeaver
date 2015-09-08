@@ -15,6 +15,26 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(eq.eq_registry['add']['fn'](1, 5), 6)
         self.assertEqual(add(1, 6), 7)
 
+    def test_eq_id(self):
+        @eq(1)
+        def a():
+            return 1
+
+        self.assertEqual(eq.id[1]['fn'](), 1)
+
+        @eq()
+        def a():
+            return 2
+
+        self.assertEqual(eq.id[1]['fn'](), 1)
+        self.assertEqual(eq.id[2]['fn'](), 2)
+
+        eq.eq_registry['a']['args'] = ['b']
+        self.assertEqual(eq.eq_registry['a']['args'], eq.id[2]['args'])
+
+        eq.id[2]['fn'] = lambda x: x ** 2
+        self.assertEqual(eq.eq_registry['a']['fn'], eq.id[2]['fn'])
+
     def test_calc(self):
         @eq(1)
         def add(a, b):
