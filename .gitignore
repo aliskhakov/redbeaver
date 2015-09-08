@@ -2,4 +2,6 @@
 .DS_Store
 .idea
 *.log
-build/*
+build
+MANIFEST
+dist
