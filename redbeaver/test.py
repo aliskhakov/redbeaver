@@ -1,69 +1,119 @@
 import unittest
 from redbeaver.exceptions import InfiniteLoopError
-from eq import Eq as eq
-from calc import calc
+from formula import Formula
+from calc import Calc
 
 
 class MyTestCase(unittest.TestCase):
-    def test_eq(self):
-        @eq(1)
-        def add(a, b):
-            return a + b
+    def test_formula_fn_registry_args(self):
+        f = Formula()
 
-        self.assertEqual(eq.eq_registry['add']['args'], ['a', 'b'])
-        self.assertEqual(eq.eq_registry['add']['fn'](1, 5), 6)
-        self.assertEqual(add(1, 6), 7)
+        @f(1)
+        def a(b, c):
+            return b + c
 
-    def test_eq_id(self):
-        @eq(1)
-        def a():
-            return 1
+        self.assertEqual(f.get_fn_by_name('a')[f.__ARGS_KEY__][1], ['b', 'c'])
 
-        self.assertEqual(eq.id[1]['fn'](), 1)
+    def test_formula_fn_registry_call(self):
+        f = Formula()
 
-        @eq(2)
-        def a():
-            return 2
+        @f(1)
+        def a(b):
+            return b ** 2
 
-        self.assertEqual(eq.id[1]['fn'](), 1)
-        self.assertEqual(eq.id[2]['fn'](), 2)
+        self.assertEqual(f.get_fn_by_name('a')[f.__CALL_KEY__][1](2), 4)
 
-        eq.eq_registry['a']['args'] = ['b']
-        self.assertEqual(eq.eq_registry['a']['args'], eq.id[2]['args'])
+    def test_fn_call_outside_formula(self):
+        f = Formula()
 
-        eq.id[2]['fn'] = lambda x: x ** 2
-        self.assertEqual(eq.eq_registry['a']['fn'], eq.id[2]['fn'])
+        @f(1)
+        def a(b, c):
+            return b * c
+
+        self.assertEqual(a(50, 41), 2050)
+
+    def test_formula_param_add_when_fn_call_outside_formula(self):
+        f = Formula()
+
+        @f(1)
+        def a(b, c):
+            return b - c
+
+        a(100, 98)
+
+        self.assertEqual(f.get_params(), {'a': 2, 'b': 100, 'c': 98})
+
+    def test_formula_num_call(self):
+        f = Formula()
+
+        @f(1)
+        def a(b):
+            return b ** 2
+
+        self.assertEqual(f(1)(5), 25)
+
+    def test_formula_set_params(self):
+        f = Formula()
+
+        f({'a': 2, 'b': 5})
+
+        self.assertEqual(f('a'), 2)
+        self.assertEqual(f.get_param('b'), 5)
 
     def test_calc(self):
-        @eq(1)
-        def add(a, b):
-            return a + b
+        f = Formula()
+        calc = Calc(f)
 
-        @eq(2)
-        def a(b):
-            return b * 2
+        @f(1)
+        def a(b, c):
+            return b + c
 
-        eq.params['b'] = 4
+        @f(2)
+        def b(c):
+            return c * 2
 
-        calc('add', eq)
+        f({'c': 4})
 
-        self.assertEqual(eq.params['add'], 12)
+        calc('a')
+
+        self.assertEqual(f('a'), 12)
+        self.assertEqual(f.get_param('b'), 8)
 
     def test_calc_loop_except(self):
-        @eq(1)
+        f = Formula()
+        calc = Calc(f)
+
+        @f(1)
         def a(b):
             return b * 2
 
-        @eq(2)
+        @f(2)
         def b(c):
             return c * 4
 
-        @eq(3)
+        @f(3)
         def c(a):
             return a * 2
 
-        self.assertRaises(InfiniteLoopError, calc, *['a', eq])
+        self.assertRaises(InfiniteLoopError, calc, *['a'])
 
+    def test_calc_iterate_param(self):
+        f = Formula()
+        calc = Calc(f)
+
+        @f(1)
+        def a(b):
+            return b * 2
+
+        @f(2)
+        def b(c):
+            return c * 2
+
+        f({'c': range(5)})
+
+        calc('a', iterate_param='c')
+
+        self.assertEqual(f('a'), [i * 4 for i in range(5)])
 
 if __name__ == '__main__':
     unittest.main()

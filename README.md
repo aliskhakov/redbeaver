@@ -16,94 +16,151 @@ $ pip install redbeaver
 Usage
 -----
 
+#### Adding functions to Formula
+
+
 ```python
-from redbeaver.eq import Eq as eq
-from redbeaver.calc import calc
+from redbeaver.formula import Formula
 ```
 
 
 ```python
-eq.eq_registry
+f = Formula()
+```
+
+
+```python
+print f
 ```
 
 
 
 
-    {}
+    {'fn_registry': {}, 'num_registry': {}, 'param_registry': {}}
 
 
 
 
 ```python
-@eq(1)
+@f(1)
 def a(b, c):
     return b + c
 ```
 
-
 ```python
-eq.eq_registry
+print f
 ```
 
 
 
 
-    {'a': {'args': ['b', 'c'], 'fn': <function redbeaver.eq.wrapped>}}
+    {'fn_registry': {'a': (('args', ['b', 'c']), ('src', ([u'@f4(1)\n', u'def a(b, c):\n', u'    return b + c\n'], 1)), ('call', <function wrapped_fn at 0x10fb28ed8>))}, 'num_registry': {1: <function wrapped_fn at 0x10fb28ed8>}, 'param_registry': {}}
 
 
 
 
 ```python
-@eq(2)
+@f(2)
 def b(c):
     return 2 * c
 ```
 
-
 ```python
-eq.eq_registry
+print f
 ```
 
 
 
 
-    {'a': {'args': ['b', 'c'], 'fn': <function redbeaver.eq.wrapped>},
-     'b': {'args': ['c'], 'fn': <function redbeaver.eq.wrapped>}}
+    {'fn_registry': {'a': (('args', ['b', 'c']), ('src', ([u'@f4(1)\n', u'def a(b, c):\n', u'    return b + c\n'], 1)), ('call', <function wrapped_fn at 0x10fb28ed8>)), 'b': (('args', ['c']), ('src', ([u'@f4(2)\n', u'def b(c):\n', u'    return 2 * c\n'], 1)), ('call', <function wrapped_fn at 0x10fab9ed8>))}, 'num_registry': {1: <function wrapped_fn at 0x10fb28ed8>, 2: <function wrapped_fn at 0x10fab9ed8>}, 'param_registry': {}}
 
 
 
 
 ```python
-eq.params
+f(2)
 ```
 
 
 
 
-    {}
+    <function __main__.wrapped_fn>
 
 
 
 
 ```python
-eq.params['c'] = 5
-```
-
-
-```python
-eq.params
+f('b')
 ```
 
 
 
 
-    {'c': 5}
+    (('args', ['c']),
+     ('src', ([u'@f4(2)\n', u'def b(c):\n', u'    return 2 * c\n'], 1)),
+     ('call', <function __main__.wrapped_fn>))
 
 
 
 
 ```python
-calc('a', eq)
+f('a')
+```
+
+
+
+
+    (('args', ['b', 'c']),
+     ('src', ([u'@f4(1)\n', u'def a(b, c):\n', u'    return b + c\n'], 1)),
+     ('call', <function __main__.wrapped_fn>))
+
+
+
+
+#### Parameters setting
+
+
+```python
+f({'c': 5, 'd': 7})
+```
+
+```python
+f.get_params()
+```
+
+
+
+
+    {'c': 5, 'd': 7}
+
+
+
+
+```python
+f('c')
+```
+
+
+
+
+    5
+
+
+
+
+#### Formula calculation
+
+
+```python
+from redbeaver.calc import Calc
+```
+
+```python
+calc = Calc(f)
+```
+
+```python
+calc('a')
 ```
 
 
@@ -115,13 +172,65 @@ calc('a', eq)
 
 
 ```python
-eq.params
+f.get_params()
 ```
 
 
 
 
-    {'a': 15, 'b': 10, 'c': 5}
+    {'a': 15, 'b': 10, 'c': 5, 'd': 7}
+
+
+
+
+
+#### Working with iterable params
+
+
+```python
+f = Formula
+```
+
+```python
+calc = Calc(f)
+```
+
+```python                                                                                
+@f(1)                                               
+def a(b):                                           
+    return b * 2                                    
+```
+
+```python                                                    
+@f(2)                                               
+def b(c):                                           
+    return c * 2                                    
+```
+
+```python                                                    
+f({'c': range(5)})                                  
+```
+
+```python                                                    
+calc('a', iterate_param='c')
+```
+
+
+
+    [0, 4, 8, 12, 16]
+
+
+
+
+
+```python
+f.get_params()
+```
+
+
+
+
+    {'a': [0, 4, 8, 12, 16], 'c': [0, 1, 2, 3, 4], 'b': [0, 2, 4, 6, 8]}
 
 
 
