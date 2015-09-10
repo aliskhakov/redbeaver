@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='redbeaver',
-    version='0.1.9',
+    version='0.2.0',
     packages=['redbeaver'],
     url='https://github.com/aliskhakov/redbeaver',
     license='Apache License 2.0',
