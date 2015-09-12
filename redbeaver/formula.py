@@ -74,6 +74,9 @@ class Formula(object):
     def get_fn_by_name(self, fn_name):
         return self.__fn_registry[fn_name]
 
+    def reset_params(self):
+        self.__param_registry = {}
+
     def __str__(self):
         return str({
             'num_registry': self.__num_registry,
