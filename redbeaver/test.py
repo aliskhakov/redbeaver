@@ -115,5 +115,21 @@ class MyTestCase(unittest.TestCase):
 
         self.assertEqual(f('a'), [i * 4 for i in range(5)])
 
+    def test_formula_reset_params(self):
+        f = Formula()
+        calc = Calc(f)
+
+        @f(1)
+        def a(b):
+            return b ** 2
+
+        f({'b': 5})
+
+        calc('a')
+
+        f.reset_params()
+
+        self.assertEqual(f.get_params(), {})
+
 if __name__ == '__main__':
     unittest.main()

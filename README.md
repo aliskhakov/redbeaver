@@ -236,6 +236,22 @@ f.get_params()
 
 
 
+#### Reset params
+
+```python
+f.reset_params()
+f.get_params()
+```
+
+
+
+
+    {}
+
+
+
+
+
 License
 -------
 Apache License 2.0
