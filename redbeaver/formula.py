@@ -73,6 +73,9 @@ class Formula(object):
 
         return fn
 
+    def _get_fn_src(self, fn_name):
+        return self._fn_registry[fn_name][Formula.__SRC_KEY__][1]
+
     def _update_param_registry(self, new_params):
         self._param_registry.update(new_params)
 
